@@ -2,73 +2,7 @@
 Hey,
 
 at the moment there is nothing to read here.
-+## Whitespace
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 OR IS THERE?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 NOPE :D
