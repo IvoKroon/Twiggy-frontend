@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES5",
+    "out": "bin/js/game.js",
+    "rootDir": "src"
+  }
+}

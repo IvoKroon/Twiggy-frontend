@@ -1,8 +1,6 @@
 class ShopState extends Phaser.State{
 	//resourses
-	water:Water; 
-	sun:Sun; 
-	earth:Earth;
+	water:Water;
 
 	coins:Coin; 
 	diamonds:Diamond;
