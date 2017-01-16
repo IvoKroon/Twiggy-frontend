@@ -117,7 +117,7 @@ class RunningState extends Phaser.State {
     loading() {
         //create the user
         let userObject = new UserObject("Ivo", "Kroon", "BLA");
-        let plantObject = new PlantData("1", "Apple tree", 0, 1, 1);
+        let plantObject = null;
         let plot = new Plot("1", "First", 1, 1, plantObject);
         // console.log(this.plot.plant_id);
         this.userData = new UserData(0, 0, 0, 0,
@@ -182,6 +182,7 @@ class RunningState extends Phaser.State {
             this.seed.inputEnabled = true;
             this.seed.input.enableDrag();
             this.seed.input.allowHorizontalDrag = false;
+            //load the plant
         }
 
         this.startTree = new GameSprite(this.game,
@@ -307,12 +308,21 @@ class RunningState extends Phaser.State {
     }
 
     growButtonHandler() {
-        console.log(this.userData.plot.plant);
-        console.log('clicked');
+        // console.log(this.userData.plot.plant);
+        // console.log('clicked');
+        console.log(this.userData);
 
         //check data
-        if (this.userData.energy < 200) {
+        if (this.userData.energy >= 200) {
+            if(this.userData.plot.plant.state_id < 7) {
+                this.userData.plot.plant.state_id += 1;
+                this.userData.energy -= 200;
+            }else{
+                console.log("Your plant is now max level");
+            }
             this.loadNewState();
+        }else{
+            console.log("Not possible yet");
         }
 
     }
@@ -320,20 +330,18 @@ class RunningState extends Phaser.State {
     update() {
         //do something every second
         //TODO make it every second..... maybe there is an error
-        if(this.counter > 60){
-            this.userData.energy += 10;
+        if(this.counter > 30){
+            this.userData.energy += 20;
 
             this.counter = 0;
         }
         //set the new energy
         this.energy.amount = this.userData.energy;
         this.counter ++;
-        console.log(this.counter);
 
         for (let i = 0; i < this.clouds.length; i++) {
             this.clouds[i].move();
         }
-        console.log(this.userData.energy);
         if (!this.userData.plot.plant) {
             // console.log("There is a plot");
             // }else{
@@ -344,6 +352,8 @@ class RunningState extends Phaser.State {
 
     collisionHandler() {
         this.seed.destroy();
+        let plantObject = new PlantData("1", "Apple tree", 0, 1, 1);
+        this.userData.plot.plant = plantObject;
         //send emit and add the tree
         console.log(this.userData);
         this.loadNewState();
