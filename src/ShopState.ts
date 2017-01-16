@@ -1,4 +1,7 @@
-class ShopState extends Phaser.State{
+module Twiggy{
+     export class ShopState extends Phaser.State{
+	//resourses
+	water:Water;
 
 	coins:Coin; 
 	diamonds:Diamond;
@@ -7,6 +10,9 @@ class ShopState extends Phaser.State{
 	itemArray:Array<ItemObject>;
 	// maakt keys item
 	cursors: Phaser.CursorKeys;
+
+	//buttons
+	backButton:ButtonObject;
 
 	rowcount: number = 0; // houd bij welke rij je zit / hoeveel er dus zijn
 	placement: number = 0; // houd bij bij welk item in de rij je zit.
@@ -23,7 +29,7 @@ class ShopState extends Phaser.State{
 		this.load.image("apple", "assets/images/apple.png");
 		// this.load.image("apple", "assets/images/apple.png");
 		
-
+		console.log('preload');
 		//loading the resourses
 		//load the sprite of the resourses
 		this.load.image( 'coin', "assets/images/dog.png" );
@@ -33,6 +39,9 @@ class ShopState extends Phaser.State{
 		this.load.image( 'earth', "assets/images/sun.png" );
 		this.load.image( 'sun', "assets/images/sun.png");
 		this.game.stage.backgroundColor = "#0000FF";
+
+		//load button sprite
+		      this.game.load.image('menuparts-04', 'assets/images/menuparts-04.png');
 	}
 	
 	create()
@@ -40,6 +49,8 @@ class ShopState extends Phaser.State{
 		//inputs
 		this.cursors = this.game.input.keyboard.createCursorKeys();
 		this.game.input.addPointer();
+
+
 		//Set title of screen
 		var shopTitle = new TextObject(this.game,this.game.width / 2, 50,"Shop", 50, "#000000")
 		shopTitle.anchor.set(0.5);
@@ -72,9 +83,19 @@ class ShopState extends Phaser.State{
 				this.placement = 0;
 			} 
 		}
+
+		console.log("created");
+
 		this.scrollHeight = this.rowcount * 100 + 250;
 		this.game.world.setBounds(0, 0, 320 * this.game.width, this.scrollHeight);
 		this.game.input.onDown.add(this.locationPointer, this);
+
+	    this.backButton = new ButtonObject(this.game, 100, 100, "menuparts-04", this.backButtonClicked);
+		this.backButton.setSizes(100, 100);
+        this.backButton.anchor.set(0.5);
+	    this.backButton.bringToTop();
+		console.log (this.backButton.x + "plus" + this.backButton.y + "plus" +this.backButton.z);
+		this.backButton.render;
 	} 
 
 	locationPointer(){
@@ -84,8 +105,13 @@ class ShopState extends Phaser.State{
 
 	action(){
 		// aangeroepen bij elke shop item apple
+			this.game.state.start("RunningState",true,true);
 	}
 
+	backButtonClicked(){
+		this.game.state.start("RunningState");
+
+	}
 	//user this for rendering
 	render(){
 		//
@@ -113,13 +139,14 @@ class ShopState extends Phaser.State{
 			{
 				if (this.game.input.y > this.fromHeight)
 					{
-						this.game.camera.y -= 15;
+						this.game.camera.y += 15;
 					}
 				else if  (this.game.input.y < this.fromHeight)
 					{
-						this.game.camera.y += 15;	
+						this.game.camera.y -= 15;	
 					}
 			}
 	}
 
+}
 }
