@@ -72,12 +72,7 @@ class RunningState extends Phaser.State {
         this.game.load.atlasJSONHash('appleTreeState5', 'assets/images/trees/apple/appleTreeState5.png', 'assets/images/trees/apple/appleTreeState5.json');
         this.game.load.atlasJSONHash('appleTreeState6', 'assets/images/trees/apple/appleTreeState6.png', 'assets/images/trees/apple/appleTreeState6.json');
         this.game.load.atlasJSONHash('appleTreeState7', 'assets/images/trees/apple/appleTreeState7.png', 'assets/images/trees/apple/appleTreeState7.json');
-        // this.game.load.atlasJSONHash('state4apple', 'assets/images/trees/apple/state4apple.png', 'assets/images/trees/apple/state4apple.json');
-        // this.game.load.atlasJSONHash('state4apple', 'assets/images/trees/apple/state4apple.png', 'assets/images/trees/apple/state4apple.json');
-        // this.game.load.image('appleTreeState4', 'assets/images/trees/apple/appleState4.png');
-        // this.game.load.image('appleTreeState5', 'assets/images/trees/apple/appleState5.png');
-        // this.game.load.image('appleTreeState6', 'assets/images/trees/apple/appleState6.png');
-        // this.game.load.image('appleTreeState7', 'assets/images/trees/apple/appleState7.png');
+
         this.game.load.image('mountain1', 'assets/images/moutain1.png');
         this.game.load.image('mountain2', 'assets/images/mountain2.png');
         this.game.load.image('mountain3', 'assets/images/mountain3.png');
@@ -92,7 +87,7 @@ class RunningState extends Phaser.State {
         this.game.load.image('menuparts-04', 'assets/images/menuparts-04.png');
         this.game.load.image('menuparts-05', 'assets/images/menuparts-05.png');
 
-        this.game.load.image('firstseed', 'assets/images/firstseed.png');
+        this.game.load.image('firstseed', 'assets/images/firstSeed.png');
     }
 
     //create background
@@ -104,9 +99,6 @@ class RunningState extends Phaser.State {
         grd.addColorStop(0, "#0e87ca");
         myBitmap.context.fillStyle = grd;
         myBitmap.context.fillRect(0, 0, this.game.width, this.game.height);
-
-        //naaw no animation we use this
-        // this.game.add.sprite(0,0, myBitmap);
 
         //load the animation
         let anim = this.game.add.sprite(0, 0, myBitmap);
@@ -175,7 +167,6 @@ class RunningState extends Phaser.State {
         this.energy.render();
 
         if (!this.userData.plot.plant) {
-            console.log('load water');
             this.seed = this.game.add.sprite(this.game.width / 2 - 10, 200, 'firstseed');
             this.seed.width = 20;
             this.seed.height = 25;
@@ -308,8 +299,6 @@ class RunningState extends Phaser.State {
     }
 
     growButtonHandler() {
-        // console.log(this.userData.plot.plant);
-        // console.log('clicked');
         console.log(this.userData);
 
         //check data
