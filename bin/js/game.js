@@ -178,7 +178,7 @@ var Twiggy;
             this.energy.render();
             if (!Twiggy.TwiggyGame.userData.plot.plant) {
                 console.log('load water');
-                this.seed = this.game.add.sprite(this.game.width / 2 - 10, 0, 'firstseed');
+                this.seed = this.game.add.sprite(this.game.width / 2 - 10, 200, 'firstseed');
                 this.seed.width = 40;
                 this.seed.height = 50;
                 this.seed.inputEnabled = true;
@@ -535,6 +535,34 @@ var Twiggy;
             _super.call(this);
             this.rowcount = 0; // houd bij welke rij je zit / hoeveel er dus zijn
             this.placement = 0; // houd bij bij welk item in de rij je zit.
+            this.verkoopClicked = function () {
+                if (Twiggy.TwiggyGame.userData.apple > 0) {
+                    Twiggy.TwiggyGame.userData.apple--;
+                    Twiggy.TwiggyGame.userData.coin = Twiggy.TwiggyGame.userData.coin + 100;
+                    this.game.add.sprite(620, 118, 'back');
+                    this.game.add.sprite(600, 65, 'back');
+                    this.game.add.sprite(560, 65, 'back');
+                    this.appleprize = new TextObject(this.game, 640, 128, Twiggy.TwiggyGame.userData.apple, 40, "#000000");
+                    this.coins = new Coin(this.game.width / 2 - 100, 90, Twiggy.TwiggyGame.userData.coin, Coin.prototype.action, this.game);
+                    this.coins.setSizes(20, 20);
+                    this.coins.render();
+                }
+                ;
+            };
+            this.verkoop1Clicked = function () {
+                if (Twiggy.TwiggyGame.userData.pear > 0) {
+                    Twiggy.TwiggyGame.userData.pear--;
+                    Twiggy.TwiggyGame.userData.coin = Twiggy.TwiggyGame.userData.coin + 100;
+                    this.game.add.sprite(620, 148, 'back');
+                    this.game.add.sprite(600, 65, 'back');
+                    this.game.add.sprite(560, 65, 'back');
+                    this.pearprize = new TextObject(this.game, 640, 128, Twiggy.TwiggyGame.userData.apple, 40, "#000000");
+                    this.coins = new Coin(this.game.width / 2 - 100, 90, Twiggy.TwiggyGame.userData.coin, Coin.prototype.action, this.game);
+                    this.coins.setSizes(20, 20);
+                    this.coins.render();
+                }
+                ;
+            };
         }
         ShopState.prototype.preload = function () {
             this.load.image("apple", "assets/images/apple.png");
@@ -542,12 +570,19 @@ var Twiggy;
             console.log('preload');
             //loading the resourses
             //load the sprite of the resourses
-            this.load.image('coin', "assets/images/dog.png");
-            this.load.image('diamond', "assets/images/dog.png");
-            this.load.image('water', "assets/images/dog.png");
-            this.load.image('earth', "assets/images/sun.png");
-            this.load.image('sun', "assets/images/sun.png");
-            this.game.stage.backgroundColor = "#0000FF";
+            //loading the resourses
+            //load the sprite of the resourses
+            this.load.image('coin', "assets/images/coin.png");
+            this.load.image('diamond', "assets/images/diamond.png");
+            this.load.image('x', "assets/images/X.png");
+            this.load.image('maal', "assets/images/maal.png");
+            this.load.image('water', "assets/images/coin.png");
+            this.load.image('earth', "assets/images/zon.png");
+            this.load.image('back', "assets/images/back.png");
+            this.load.image('verkoop', "assets/images/verkoopbutton.png");
+            this.game.stage.backgroundColor = "#663300";
+            this.load.image('peer', "assets/images/pearattr1.png");
+            this.game.stage.backgroundColor = "#d2691e";
             //load button sprite
             this.game.load.image('menuparts-04', 'assets/images/menuparts-04.png');
         };
@@ -558,11 +593,14 @@ var Twiggy;
             //Set title of screen
             var shopTitle = new TextObject(this.game, this.game.width / 2, 50, "Shop", 50, "#000000");
             shopTitle.anchor.set(0.5);
-            //set coin and diamods
-            this.coins = new Coin(this.game.width / 2 - 100, 90, 200, Coin.prototype.action, this.game);
+            var sdifTitle = new TextObject(this.game, 680, 153, "X", 30, "#000000");
+            sdifTitle.anchor.set(0.5);
+            var sdifTitle = new TextObject(this.game, 680, 243, "X", 30, "#000000");
+            sdifTitle.anchor.set(0.5);
+            this.coins = new Coin(this.game.width / 2 - 100, 90, Twiggy.TwiggyGame.userData.coin, Coin.prototype.action, this.game);
             this.coins.setSizes(20, 20);
             this.coins.render();
-            this.diamonds = new Diamond(this.game.width / 2 + 50, 90, 210, Coin.prototype.action, this.game);
+            this.diamonds = new Diamond(this.game.width / 2 + 50, 90, Twiggy.TwiggyGame.userData.diamond, Coin.prototype.action, this.game);
             this.diamonds.setSizes(20, 20);
             this.diamonds.render();
             //set line for decoration
@@ -571,28 +609,37 @@ var Twiggy;
             for (var i = 0; i < 100; i++) {
                 this.itemArray.push(new AppleItem(this.game, 0, 0, ShopState.prototype.action));
             }
-            for (var _i = 0, _a = this.itemArray; _i < _a.length; _i++) {
-                var item = _a[_i];
-                item.x = this.placement * 100;
-                item.y = this.rowcount * 100 + 120;
-                item.setSizes(50, 50);
-                item.render();
-                this.placement++;
-                if (this.placement == 6) {
-                    this.rowcount++;
-                    this.placement = 0;
-                }
-            }
             console.log("created");
             this.scrollHeight = this.rowcount * 100 + 250;
             this.game.world.setBounds(0, 0, 320 * this.game.width, this.scrollHeight);
             this.game.input.onDown.add(this.locationPointer, this);
-            this.backButton = new ButtonObject(this.game, 100, 100, "menuparts-04", this.backButtonClicked);
-            this.backButton.setSizes(100, 100);
-            this.backButton.anchor.set(0.5);
-            this.backButton.bringToTop();
-            console.log(this.backButton.x + "plus" + this.backButton.y + "plus" + this.backButton.z);
-            this.backButton.render;
+            this.x = new ButtonObject(this.game, 1100, 45, "x", this.xClick);
+            this.x.setSizes(20, 20);
+            this.x.anchor.set(0.5);
+            this.x.render();
+            this.verkoop = new ButtonObject(this.game, 980, 150, "verkoop", this.verkoopClicked);
+            this.verkoop.setSizes(100, 50);
+            this.verkoop.anchor.set(0.5);
+            this.verkoop.render();
+            this.verkoop = new ButtonObject(this.game, 980, 240, "verkoop", this.verkoop1Clicked);
+            this.verkoop.setSizes(100, 50);
+            this.verkoop.anchor.set(0.5);
+            this.verkoop.render();
+            this.game.add.sprite(340, 120, 'apple');
+            this.game.add.sprite(340, 205, 'peer');
+            //set line for decoration
+            new Phaser.Rectangle(0, 0, 0, 0);
+            var barBlack, maxWidth, tween;
+            barBlack = this.game.add.graphics(0, 115);
+            barBlack.beginFill(0x000000);
+            barBlack.drawRect(0, 0, 25, 2);
+            maxWidth = 1366;
+            barBlack.width = 0;
+            tween = this.game.add.tween(barBlack);
+            tween.to({ width: maxWidth }, 100);
+            tween.start();
+            this.appleprize = new TextObject(this.game, 640, 128, Twiggy.TwiggyGame.userData.apple, 40, "#000000");
+            this.pearprize = new TextObject(this.game, 640, 218, Twiggy.TwiggyGame.userData.pear, 40, "#000000");
         };
         ShopState.prototype.locationPointer = function () {
             this.fromHeight = this.game.input.activePointer.y;
@@ -602,7 +649,7 @@ var Twiggy;
             // aangeroepen bij elke shop item apple
             this.game.state.start("RunningState", true, true);
         };
-        ShopState.prototype.backButtonClicked = function () {
+        ShopState.prototype.xClick = function () {
             this.game.state.start("RunningState");
         };
         //user this for rendering
@@ -853,7 +900,8 @@ var ResourcesObject = (function (_super) {
         var x = this.x + 30;
         var y = this.y;
         var amountString = String(amount);
-        this.text = new TextObject(this.game, x, y, amountString, 15, "#000000");
+        this.text = new TextObject(this.game, x, y, amountString, 24, "#000000");
+        console.log('eee');
     };
     ResourcesObject.prototype.updateValue = function (amount) {
         var amountString = String(amount);
