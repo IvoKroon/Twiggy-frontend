@@ -16,7 +16,8 @@ class ResourcesObject extends ButtonObject{
         var x = this.x + 30;
         var y = this.y;
         var amountString = String(amount);
-        this.text = new TextObject(this.game, x, y, amountString, 15, "#000000")
+        this.text = new TextObject(this.game, x, y, amountString, 24, "#000000")
+        console.log('eee');
     }
 
     updateValue(amount:number){
