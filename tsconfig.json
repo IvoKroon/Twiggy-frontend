@@ -6,6 +6,6 @@
         "out": "bin/js/game.js"
     },
     "exclude": [
-        "bin"
+        
     ]
 }

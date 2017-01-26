@@ -178,7 +178,7 @@ var Twiggy;
             this.energy.render();
             if (!Twiggy.TwiggyGame.userData.plot.plant) {
                 console.log('load water');
-                this.seed = this.game.add.sprite(this.game.width / 2 - 10, 0, 'firstseed');
+                this.seed = this.game.add.sprite(this.game.width / 2 - 10, 200, 'firstseed');
                 this.seed.width = 40;
                 this.seed.height = 50;
                 this.seed.inputEnabled = true;
@@ -853,7 +853,8 @@ var ResourcesObject = (function (_super) {
         var x = this.x + 30;
         var y = this.y;
         var amountString = String(amount);
-        this.text = new TextObject(this.game, x, y, amountString, 15, "#000000");
+        this.text = new TextObject(this.game, x, y, amountString, 24, "#000000");
+        console.log('eee');
     };
     ResourcesObject.prototype.updateValue = function (amount) {
         var amountString = String(amount);
