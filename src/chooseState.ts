@@ -8,7 +8,7 @@ module Twiggy {
         preload() {
             this.game.load.image('pearbutton', "assets/images/pearbutton.png");
             this.game.load.image('applebutton', "assets/images/applebutton.png");
-            this.game.load.image('seed', "assets/images/firstseed.png");
+            this.game.load.image('seed', "assets/images/firstSeed.png");
         }
 
         createGradient() {
