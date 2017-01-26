@@ -119,7 +119,7 @@ module Twiggy {
             this.game.load.image('menuparts-04', 'assets/images/menuparts-04.png');
             this.game.load.image('menuparts-05', 'assets/images/menuparts-05.png');
 
-            this.game.load.image('firstseed', 'assets/images/firstseed.png');
+            this.game.load.image('firstseed', 'assets/images/firstSeed.png');
         }
 
         //create background
