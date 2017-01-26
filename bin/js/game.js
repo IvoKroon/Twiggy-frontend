@@ -3,6 +3,36 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var CookieHandler = (function () {
+    function CookieHandler(cookie) {
+        this.cookie = cookie;
+        if (!localStorage.getItem(this.cookie)) {
+            localStorage.setItem(this.cookie, "0");
+        }
+        // this.delete();
+    }
+    CookieHandler.prototype.delete = function () {
+        localStorage.setItem(this.cookie, "0");
+    };
+    CookieHandler.prototype.add = function (amount) {
+        var cookieAmount = this.getInt();
+        // cookieAmount += amount;
+        this.set(cookieAmount);
+    };
+    CookieHandler.prototype.set = function (add) {
+        var cookieAmount = String(add);
+        localStorage.setItem(this.cookie, cookieAmount);
+    };
+    CookieHandler.prototype.getInt = function () {
+        if (localStorage.getItem(this.cookie)) {
+            return parseInt(localStorage.getItem(this.cookie));
+        }
+        else {
+            return false;
+        }
+    };
+    return CookieHandler;
+}());
 var MenuScreenState = (function (_super) {
     __extends(MenuScreenState, _super);
     function MenuScreenState() {
@@ -31,12 +61,22 @@ var Twiggy;
             this.curTreeLevel = 1;
             this.startGame = false;
             this.counter = 0;
+            this.popupText = null;
         }
         RunningState.prototype.preload = function () {
+            console.log(Twiggy.TwiggyGame.userData.seed);
+            // this.game.scale.pageAlignVertically = true;
+            // this.game.scale.pageAlignHorizontally = true;
+            // this.game.scale.setShowAll();
+            // this.game.scale.refresh();
+            //keep the game active all the time
+            // this.game.stage.disableVisibilityChange = true;
             this.menuGroup = new GroupObject(this.game);
             this.game.load.image('water', "assets/images/waterdrop.png");
             this.game.load.image('energy', "assets/images/light.png");
             this.game.load.image('button', "assets/images/button.png");
+            this.game.load.image('appleAttr', "assets/images/apple.png");
+            this.game.load.image('pearattr', "assets/images/pearattr.png");
             this.game.load.image('coin', "assets/images/coin.png");
             this.game.load.image('button1', "assets/images/sun.png");
             this.game.load.image('button2', "assets/images/sun.png");
@@ -44,8 +84,13 @@ var Twiggy;
             this.game.load.image('shopButton', "assets/images/market.png");
             this.game.load.image('buttontoshop', "assets/images/dog.png");
             this.game.load.image('growbutton', 'assets/images/growbutton.png');
+            this.game.load.image('waterwarning1', 'assets/images/waterwarning.png');
+            this.game.load.image('waterwarning2', 'assets/images/waterwarning1.png');
+            this.game.load.image('waterwarning3', 'assets/images/waterwarning2.png');
+            this.game.load.image('popup', 'assets/images/popup.png');
+            this.game.load.image('close', 'assets/images/close.png');
             //trees growing.
-            //Pear growing.
+            // //Pear growing.
             this.game.load.image('pear1', 'assets/images/pear/tree-01.png');
             this.game.load.image('pear2', 'assets/images/pear/tree-02.png');
             this.game.load.image('pear3', 'assets/images/pear/tree-03.png');
@@ -61,12 +106,6 @@ var Twiggy;
             this.game.load.atlasJSONHash('appleTreeState5', 'assets/images/trees/apple/appleTreeState5.png', 'assets/images/trees/apple/appleTreeState5.json');
             this.game.load.atlasJSONHash('appleTreeState6', 'assets/images/trees/apple/appleTreeState6.png', 'assets/images/trees/apple/appleTreeState6.json');
             this.game.load.atlasJSONHash('appleTreeState7', 'assets/images/trees/apple/appleTreeState7.png', 'assets/images/trees/apple/appleTreeState7.json');
-            // this.game.load.atlasJSONHash('state4apple', 'assets/images/trees/apple/state4apple.png', 'assets/images/trees/apple/state4apple.json');
-            // this.game.load.atlasJSONHash('state4apple', 'assets/images/trees/apple/state4apple.png', 'assets/images/trees/apple/state4apple.json');
-            // this.game.load.image('appleTreeState4', 'assets/images/trees/apple/appleState4.png');
-            // this.game.load.image('appleTreeState5', 'assets/images/trees/apple/appleState5.png');
-            // this.game.load.image('appleTreeState6', 'assets/images/trees/apple/appleState6.png');
-            // this.game.load.image('appleTreeState7', 'assets/images/trees/apple/appleState7.png');
             this.game.load.image('mountain1', 'assets/images/moutain1.png');
             this.game.load.image('mountain2', 'assets/images/mountain2.png');
             this.game.load.image('mountain3', 'assets/images/mountain3.png');
@@ -96,20 +135,9 @@ var Twiggy;
             anim.alpha = 0;
             this.game.add.tween(anim).to({ alpha: 1 }, 2000).start();
         };
-        RunningState.prototype.loading = function () {
-            //create the user
-            /*  let userObject = new UserObject("Ivo", "Kroon", "BLA");
-              let plantObject = null;
-              let plot = new Plot("1", "First", 1, 1, plantObject);*/
-            // console.log(this.plot.plant_id);
-            /*  this.userData = new UserData(TwiggyGame.energy, 0, 0, 0,
-                  plot,
-                  userObject
-              );*/
-        };
         RunningState.prototype.create = function () {
-            //create a user
-            this.loading();
+            // console.log("Test");
+            // this.quest = new QuestObject(TwiggyGame.userData);
             this.createGradient();
             //load the background
             var dutchMountain = this.game.add.sprite(-3, this.game.height - 300, 'dutchmountain');
@@ -136,16 +164,7 @@ var Twiggy;
             this.menubutton.setSizes(100, 50);
             this.menuGroup.add(this.menubutton); // voeg zo alle knopjes in de array.
             this.game.world.bringToTop(this.menuGroup);
-            if (Twiggy.TwiggyGame.growButtonExist) {
-                var growButtonHeight = this.game.cache.getImage('gb').height / 1.5;
-                var growButtonWidth = this.game.cache.getImage('gb').width / 1.5;
-                this.growButton = this.game.add.sprite(this.game.width / 2 - growButtonWidth / 2, this.game.height - 80, 'gb');
-                this.growButton.animations.add('growButton');
-                this.growButton.animations.play('growButton', 4, true);
-                this.growButton.inputEnabled = true;
-                this.growButton.events.onInputDown.add(this.growButtonHandler.bind(this), this);
-                this.growButton.width = growButtonWidth;
-                this.growButton.height = growButtonHeight;
+            if (Twiggy.TwiggyGame.userData.plot.plant) {
             }
             this.clouds = [
                 new Cloud(this.game, 'cloud'),
@@ -154,14 +173,14 @@ var Twiggy;
                 new Cloud(this.game, 'cloud'),
             ];
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
-            Twiggy.TwiggyGame.energy = new Energy(20, 20, Math.floor(Twiggy.TwiggyGame.userData.energy), Energy.prototype.action, this.game);
-            Twiggy.TwiggyGame.energy.setSizes(15, 20);
-            Twiggy.TwiggyGame.energy.render();
+            this.energy = new Energy(20, 20, Math.floor(Twiggy.TwiggyGame.userData.energy), Energy.prototype.action, this.game);
+            this.energy.setSizes(15, 20);
+            this.energy.render();
             if (!Twiggy.TwiggyGame.userData.plot.plant) {
                 console.log('load water');
-                this.seed = this.game.add.sprite(this.game.width / 2 - 10, 200, 'firstseed');
-                this.seed.width = 20;
-                this.seed.height = 25;
+                this.seed = this.game.add.sprite(this.game.width / 2 - 10, 0, 'firstseed');
+                this.seed.width = 40;
+                this.seed.height = 50;
                 this.seed.inputEnabled = true;
                 this.seed.input.enableDrag();
                 this.seed.input.allowHorizontalDrag = false;
@@ -185,25 +204,37 @@ var Twiggy;
             this.water = new Water(20, 80, Math.floor(Twiggy.TwiggyGame.userData.water), Water.prototype.action, this.game);
             this.water.setSizes(20, 20);
             this.water.render();
-            Twiggy.TwiggyGame.coin = new Coin(this.game.width - 200, 20, 200, Coin.prototype.action, this.game);
-            Twiggy.TwiggyGame.coin.setSizes(20, 20);
-            Twiggy.TwiggyGame.coin.render();
-            Twiggy.TwiggyGame.coin.inputEnabled = true;
-            Twiggy.TwiggyGame.coin.events.onInputDown.add(this.clearCookie.bind(this), this);
+            this.coin = new Coin(this.game.width - 200, 20, 200, Coin.prototype.action, this.game);
+            this.coin.setSizes(20, 20);
+            this.coin.render();
             var fourth = this.game.width / 4; // een vierde van de game grote
             var eigth = this.game.height / 8; // 1/8
+            this.popup = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'popup');
+            this.popup.anchor.set(0.5);
+            this.popup.inputEnabled = true;
+            this.popup.input.enableDrag();
+            this.closewidth = (this.popup.width / 2) - 30;
+            this.closeheight = (this.popup.height / 2) - 8;
+            this.closebutton = new ButtonObject(this.game, this.closewidth, this.closeheight, 'close', this.closePopup.bind(this));
+            this.popup.addChild(this.closebutton);
+            this.popup.scale.set(0);
+            this.game.world.bringToTop(this.popup);
+            this.openPopup.bind(this);
             // this.game.time.events.loop(Phaser.Timer.SECOND, this.loop.bind(this), this);
         };
-        RunningState.prototype.clearCookie = function () {
-            localStorage.clear();
+        RunningState.prototype.closePopup = function () {
+            this.game.add.tween(this.popup.scale).to({ x: 0, y: 0 }, 500, Phaser.Easing.Elastic.Out, true).start();
+            console.log("closing");
+        };
+        RunningState.prototype.openPopup = function () {
+            var weirdtween = this.game.add.tween(this.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
         };
         //THIS IS FOR UPDATING THE TREE STATE
         RunningState.prototype.loadNewState = function () {
             if (this.tree) {
                 this.tree.destroy();
             }
-            if (!Twiggy.TwiggyGame.growButtonExist) {
-                Twiggy.TwiggyGame.growButtonExist = true;
+            if (Twiggy.TwiggyGame.userData.plot.plant) {
                 var growButtonHeight = this.game.cache.getImage('gb').height / 1.5;
                 var growButtonWidth = this.game.cache.getImage('gb').width / 1.5;
                 this.growButton = this.game.add.sprite(this.game.width / 2 - growButtonWidth / 2, this.game.height - 80, 'gb');
@@ -262,35 +293,179 @@ var Twiggy;
             this.tree.width = appleTreeWidth;
             this.tree.height = appleTreeHeight;
             this.game.world.bringToTop(this.startTree);
+            if (!this.treeName) {
+                this.treeName = new TextObject(this.game, 0, 50, Twiggy.TwiggyGame.userData.plot.plant.title, 30, "#000");
+                this.treeName.x = this.game.width / 2 - this.treeName.width / 2;
+            }
+            this.game.world.bringToTop(this.treeName);
+            this.game.world.bringToTop(this.popup);
         };
         RunningState.prototype.growButtonHandler = function () {
-            // console.log(this.userData.plot.plant);
-            // console.log('clicked');
             console.log(Twiggy.TwiggyGame.userData);
             //check data
-            if (Twiggy.TwiggyGame.userData.energy >= 200) {
+            var updateCoast = this.treeCoast();
+            if (Twiggy.TwiggyGame.userData.energy >= updateCoast) {
                 if (Twiggy.TwiggyGame.userData.plot.plant.state_id < 7) {
+                    Twiggy.TwiggyGame.userData.energy -= updateCoast;
+                    this.energy.amount = Twiggy.TwiggyGame.userData.energy;
                     Twiggy.TwiggyGame.userData.plot.plant.state_id += 1;
-                    Twiggy.TwiggyGame.userData.energy -= 200;
+                    this.loadNewState();
                 }
                 else {
                     console.log("Your plant is now max level");
                 }
-                this.loadNewState();
             }
             else {
                 console.log("Not possible yet");
             }
         };
+        RunningState.prototype.treeCoast = function () {
+            var coast = 0;
+            switch (Twiggy.TwiggyGame.userData.plot.plant.state_id) {
+                case 1:
+                    coast = 200;
+                    break;
+                case 2:
+                    coast = 220;
+                    break;
+                case 3:
+                    coast = 240;
+                    break;
+                case 4:
+                    coast = 260;
+                    break;
+                case 5:
+                    coast = 280;
+                    break;
+                case 6:
+                    coast = 300;
+                    break;
+                case 7:
+                    coast = 320;
+                    break;
+                default:
+                    coast = 320;
+                    console.log("Switch Error");
+            }
+            return coast;
+        };
         RunningState.prototype.update = function () {
+            var _this = this;
+            // this.quest.update(TwiggyGame.userData);
+            Twiggy.TwiggyGame.userData.update();
+            if (Twiggy.TwiggyGame.energyQuest) {
+                if (this.popupText) {
+                    this.popup.removeChild(this.popupText);
+                }
+                //add text
+                this.popupText = new TextObject(this.game, 0, 0, "Je hebt 600 energy!", 20, "#000");
+                // text.re
+                this.popup.addChild(this.popupText);
+                this.popup.reset;
+                this.openPopup();
+                Twiggy.TwiggyGame.energyQuest = false;
+            }
+            if (Twiggy.TwiggyGame.stateQuest) {
+                if (this.popupText) {
+                    this.popup.removeChild(this.popupText);
+                }
+                this.popupText = new TextObject(this.game, 0, 0, "Whooew, state 3!", 20, "#000");
+                // text.re
+                this.popup.addChild(this.popupText);
+                this.openPopup();
+                Twiggy.TwiggyGame.stateQuest = false;
+            }
+            if (Twiggy.TwiggyGame.appleQuest) {
+                if (this.popupText) {
+                    this.popup.removeChild(this.popupText);
+                }
+                this.popupText = new TextObject(this.game, 0, 0, "7 appels geplukt!", 20, "#000");
+                // text.re
+                this.popup.addChild(this.popupText);
+                this.openPopup();
+                Twiggy.TwiggyGame.appleQuest = false;
+            }
             //do something every second
             //TODO make it every second..... maybe there is an error
-            if (this.counter > 30) {
-                Twiggy.TwiggyGame.userData.energy += 20;
-                this.counter = 0;
+            if (Twiggy.TwiggyGame.userData.plot.plant) {
+                if (this.counter % 180 == 0) {
+                    //give water
+                    Twiggy.TwiggyGame.userData.water++;
+                }
+                if (this.counter % 360 == 0) {
+                    //show water WARNING
+                    var waterSprite = 'waterwarning1';
+                    //TODO SHOW DIFFERENT WARNINGS.
+                    //TODO Destroy the tree.
+                    if (!this.waterWarning) {
+                        if (this.waterWarningState == 1) {
+                            waterSprite = 'waterwarning1';
+                        }
+                        else if (this.waterWarningState == 2) {
+                            // this.waterWarning.destroy();
+                            waterSprite = 'waterwarning2';
+                        }
+                        else {
+                            // this.waterWarning.destroy();
+                            waterSprite = 'waterwarning3';
+                        }
+                    }
+                    if (!this.waterWarning) {
+                        console.log("SHOW WATER WARNING");
+                        this.waterWarning = new ButtonObject(this.game, 80, 80, waterSprite, function () {
+                            console.log("TEST");
+                            Twiggy.TwiggyGame.userData.water--;
+                            _this.water.amount = Twiggy.TwiggyGame.userData.water;
+                            _this.waterWarning.destroy();
+                            _this.waterWarning = null;
+                        });
+                        this.waterWarning.render();
+                    }
+                    else {
+                    }
+                }
             }
-            //set the new energy
-            Twiggy.TwiggyGame.energy.amount = Twiggy.TwiggyGame.userData.energy;
+            if (this.counter % 60 == 0) {
+                // console.log("SEC");
+                Twiggy.TwiggyGame.userData.energy += 100;
+                this.energy.amount = Twiggy.TwiggyGame.userData.energy;
+                this.coin.amount = Twiggy.TwiggyGame.userData.coin;
+                this.water.amount = Twiggy.TwiggyGame.userData.water;
+            }
+            if (Twiggy.TwiggyGame.userData.plot.plant) {
+                if (Twiggy.TwiggyGame.userData.plot.plant.state_id > 6) {
+                    if (this.counter % 180 == 0) {
+                        //create new apple
+                        //place apple on right place
+                        var fruitreeWidth = 300;
+                        var fruitTreeHeight = 500;
+                        var maxFruitX = this.game.width / 2;
+                        var minFruitX = this.game.width / 2 - 100;
+                        var maxFruitY = this.game.height - fruitTreeHeight - 250;
+                        var minFruitY = this.game.height - fruitTreeHeight - 100;
+                        var fruitX = Math.floor((Math.random() * 180) + minFruitX);
+                        var fruitY = Math.floor((Math.random() * 220) + minFruitY);
+                        var fruit_1 = null;
+                        if (Twiggy.TwiggyGame.userData.seed == 1) {
+                            fruit_1 = new ButtonObject(this.game, fruitX, fruitY, 'appleAttr', function () {
+                                Twiggy.TwiggyGame.userData.apple++;
+                                console.log(Twiggy.TwiggyGame.userData.apple);
+                                fruit_1.destroy();
+                            });
+                        }
+                        else {
+                            fruit_1 = new ButtonObject(this.game, fruitX, fruitY, 'pearattr', function () {
+                                Twiggy.TwiggyGame.userData.pear++;
+                                console.log(Twiggy.TwiggyGame.userData.pear);
+                                fruit_1.destroy();
+                            });
+                        }
+                        fruit_1.width = 30;
+                        fruit_1.height = 30;
+                        fruit_1.render();
+                    }
+                }
+            }
             this.counter++;
             for (var i = 0; i < this.clouds.length; i++) {
                 this.clouds[i].move();
@@ -301,12 +476,19 @@ var Twiggy;
                 this.game.physics.arcade.overlap(this.startTree, this.seed, this.collisionHandler, null, this); // this.socket.on('energy', function (data: any) {
             }
         };
+        RunningState.prototype.getApple = function () {
+        };
         RunningState.prototype.collisionHandler = function () {
             this.seed.destroy();
-            var plantObject = new PlantData("1", "Apple tree", 0, 1, 1);
+            var plantObject = null;
+            if (Twiggy.TwiggyGame.userData.seed == 1) {
+                plantObject = new PlantData("1", "Appel boom", 0, 1, 1);
+            }
+            else {
+                plantObject = new PlantData("1", "Peren boom", 0, 1, 1);
+            }
             Twiggy.TwiggyGame.userData.plot.plant = plantObject;
-            //send emit and add the tree
-            console.log(Twiggy.TwiggyGame.userData);
+            console.log(Twiggy.TwiggyGame.userData.plot.plant);
             this.loadNewState();
         };
         RunningState.prototype.toggleMenu = function () {
@@ -448,24 +630,89 @@ var Twiggy;
     }(Phaser.State));
     Twiggy.ShopState = ShopState;
 })(Twiggy || (Twiggy = {}));
+var Twiggy;
+(function (Twiggy) {
+    var ChooseState = (function (_super) {
+        __extends(ChooseState, _super);
+        function ChooseState() {
+            _super.apply(this, arguments);
+        }
+        ChooseState.prototype.preload = function () {
+            this.game.load.image('pearbutton', "assets/images/pearbutton.png");
+            this.game.load.image('applebutton', "assets/images/applebutton.png");
+            this.game.load.image('seed', "assets/images/firstseed.png");
+        };
+        ChooseState.prototype.createGradient = function () {
+            this.game.stage.backgroundColor = "#FFF";
+            var myBitmap = this.game.add.bitmapData(this.game.width, this.game.height);
+            var grd = myBitmap.context.createLinearGradient(0, 0, 0, 500);
+            grd.addColorStop(1, "#cbe0f4");
+            grd.addColorStop(0, "#0e87ca");
+            myBitmap.context.fillStyle = grd;
+            myBitmap.context.fillRect(0, 0, this.game.width, this.game.height);
+            //naaw no animation we use this
+            this.game.add.sprite(0, 0, myBitmap);
+            //load the animation
+            // let anim = this.game.add.sprite(0, 0, myBitmap);
+            // anim.alpha = 0;
+            // this.game.add.tween(anim).to({alpha: 1}, 2000).start();
+        };
+        ChooseState.prototype.create = function () {
+            this.createGradient();
+            var centerY = this.game.height / 2;
+            var centerX = this.game.cache.getImage('applebutton').width;
+            var padding = 40;
+            //buttons
+            this.pearButton = new ButtonObject(this.game, this.game.width / 2 - centerX, centerY, 'pearbutton', ChooseState.prototype.choosePear);
+            this.appleButton = new ButtonObject(this.game, this.game.width / 2 + padding, centerY, 'applebutton', ChooseState.prototype.chooseApple);
+            //seeds
+            var seedHeight = 40;
+            var seedWidth = 25;
+            this.appleSeedButton = new ButtonObject(this.game, this.pearButton.x + this.pearButton.width / 2 - seedWidth / 2, this.pearButton.y - this.pearButton.height, 'seed', ChooseState.prototype.chooseApple);
+            this.pearSeedButton = new ButtonObject(this.game, this.appleButton.x + this.appleButton.width / 2 - seedWidth / 2, this.pearButton.y - this.pearButton.height, 'seed', ChooseState.prototype.choosePear);
+            this.appleSeedButton.setSizes(seedWidth, seedHeight);
+            this.pearSeedButton.setSizes(seedWidth, seedHeight);
+            this.pearButton.render();
+            this.appleButton.render();
+            this.appleSeedButton.render();
+            this.pearSeedButton.render();
+        };
+        ChooseState.prototype.chooseApple = function () {
+            Twiggy.TwiggyGame.userData.seed = 1;
+            console.log("APPLE");
+            console.log(Twiggy.TwiggyGame.userData);
+            this.game.state.start('RunningState', true, true);
+        };
+        ChooseState.prototype.choosePear = function () {
+            Twiggy.TwiggyGame.userData.seed = 2;
+            this.game.state.start('RunningState', true, true);
+        };
+        return ChooseState;
+    }(Phaser.State));
+    Twiggy.ChooseState = ChooseState;
+})(Twiggy || (Twiggy = {}));
 /// <reference path="../tsDefinitions/phaser.d.ts" />
 /// <reference path="./RunningState.ts" />
 var Twiggy;
 (function (Twiggy) {
     var TwiggyGame = (function () {
+        // static growButtonExist : boolean = false;
         function TwiggyGame() {
             //setup the game
-            this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'content');
+            this.game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.CANVAS, 'content');
             this.game.state.add("MenuScreenState", MenuScreenState, false);
             this.game.state.add("RunningState", Twiggy.RunningState, false);
             this.game.state.add("ShopState", Twiggy.ShopState, false);
-            this.game.state.start("RunningState", true, true);
+            this.game.state.add("ChooseState", Twiggy.ChooseState, false);
+            this.game.state.start("ChooseState", true, true);
             var userObject = new UserObject("Ivo", "Kroon", "BLA");
-            var plantObject = null;
-            var plot = new Plot("1", "First", 1, 1, plantObject);
-            TwiggyGame.userData = new UserData(100, 0, 0, 0, plot, userObject);
+            var plantData = null;
+            var plot = new Plot("1", "First", 1, 1, plantData);
+            TwiggyGame.userData = new Twiggy.UserData(100, 0, 0, 0, plot, userObject);
         }
-        TwiggyGame.growButtonExist = false;
+        TwiggyGame.appleQuest = false;
+        TwiggyGame.energyQuest = false;
+        TwiggyGame.stateQuest = false;
         return TwiggyGame;
     }());
     Twiggy.TwiggyGame = TwiggyGame;
@@ -803,22 +1050,96 @@ var Plot = (function () {
     }
     return Plot;
 }());
+var QuestObject = (function () {
+    function QuestObject(userDate) {
+        this.someData = "some data";
+        this.energyQuestBool = false;
+        this.stateQuest = false;
+        this.gatherQuest = false;
+        this.userData = userDate;
+    }
+    QuestObject.prototype.update = function (userData) {
+        this.userData = userData;
+    };
+    QuestObject.prototype.energyQuest = function () {
+        if (!this.energyQuestBool) {
+            if (this.userData.energy > 600) {
+                this.energyQuestBool = true;
+                return true;
+            }
+        }
+        return false;
+    };
+    QuestObject.prototype.stateChecker = function () {
+        if (!this.stateQuest) {
+            if (this.userData.plot.plant) {
+                if (this.userData.plot.plant.state_id > 3) {
+                    this.stateQuest = true;
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    QuestObject.prototype.gatherApple = function () {
+        if (!this.gatherQuest) {
+            if (this.userData.plot.plant) {
+                if (this.userData.apple > 5) {
+                    this.gatherQuest = true;
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    return QuestObject;
+}());
 /**
  * Created by ivokroon on 02/01/2017.
  */
-var UserData = (function () {
-    function UserData(energy, water, coin, diamond, plot, user) {
-        //set the resources
-        this.energy = energy;
-        this.water = water;
-        this.coin = coin;
-        this.diamond = diamond;
-        //set plot and user data.
-        this.plot = plot;
-        this.user = user;
-    }
-    return UserData;
-}());
+var Twiggy;
+(function (Twiggy) {
+    var UserData = (function () {
+        function UserData(energy, water, coin, diamond, plot, user) {
+            this.apple = 0;
+            this.pear = 0;
+            //set the resources
+            this.energy = energy;
+            this.water = water;
+            this.coin = coin;
+            this.diamond = diamond;
+            this.plot = plot;
+            this.user = user;
+            this.quest = new QuestObject(this);
+        }
+        UserData.prototype.update = function () {
+            // console.log(game.state.states);
+            // console.log(TwiggyGame.appleQuest);
+            this.quest.update(this);
+            if (this.quest.energyQuest()) {
+                Twiggy.TwiggyGame.energyQuest = true;
+                //show message
+                console.log("energy quest done");
+                // game.state.states[]
+                this.energy += 200;
+            }
+            if (this.quest.stateChecker()) {
+                //show message
+                Twiggy.TwiggyGame.stateQuest = true;
+                console.log("State");
+                this.coin += 200;
+            }
+            if (this.quest.gatherApple()) {
+                //show message
+                Twiggy.TwiggyGame.appleQuest = true;
+                console.log("gather");
+                this.coin += 200;
+            }
+        };
+        return UserData;
+    }());
+    Twiggy.UserData = UserData;
+})(Twiggy || (Twiggy = {}));
 var UserObject = (function () {
     function UserObject(firstname, lastname, username) {
         this.firstName = firstname;
@@ -827,3 +1148,4 @@ var UserObject = (function () {
     }
     return UserObject;
 }());
+//# sourceMappingURL=game.js.map

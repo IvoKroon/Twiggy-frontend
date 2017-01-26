@@ -1,10 +1,8 @@
 {
     "compilerOptions": {
         "sourceMap":  true,
-        "removeComments": true,
+        // "module": "commonjs",
         "target":"es5",
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
         "out": "bin/js/game.js"
     },
     "exclude": [
