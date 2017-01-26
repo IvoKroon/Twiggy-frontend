@@ -196,7 +196,7 @@ module Twiggy {
 
             if (!TwiggyGame.userData.plot.plant) {
                 console.log('load water');
-                this.seed = this.game.add.sprite(this.game.width / 2 - 10, 0, 'firstseed');
+                this.seed = this.game.add.sprite(this.game.width / 2 - 10, 200, 'firstseed');
                 this.seed.width = 40;
                 this.seed.height = 50;
                 this.seed.inputEnabled = true;
