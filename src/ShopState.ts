@@ -156,9 +156,9 @@ new Phaser.Rectangle(0, 0,0,0);
         if(TwiggyGame.userData.pear >0){
 			TwiggyGame.userData.pear--;
 			TwiggyGame.userData.coin = TwiggyGame.userData.coin + 100;
-			this.game.add.sprite(620, 148,'back');
+			this.game.add.sprite(620, 210,'back');
 			this.game.add.sprite(600, 65,'back');
-			this.game.add.sprite(560, 65,'back');
+			this.game.add.sprite(620, 65,'back');
 			this.pearprize = new TextObject(this.game,640, 128,TwiggyGame.userData.apple, 40, "#000000");
 			this.coins = new Coin(this.game.width / 2 - 100, 90, TwiggyGame.userData.coin,Coin.prototype.action, this.game);
 			this.coins.setSizes(20,20);
