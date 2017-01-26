@@ -238,6 +238,12 @@ var Twiggy;
                 var growButtonHeight = this.game.cache.getImage('gb').height / 1.5;
                 var growButtonWidth = this.game.cache.getImage('gb').width / 1.5;
                 this.growButton = this.game.add.sprite(this.game.width / 2 - growButtonWidth / 2, this.game.height - 80, 'gb');
+                if (!this.energyNeeded) {
+                    this.energyNeeded = new TextObject(this.game, this.game.width / 2 - growButtonWidth / 2
+                        + 80, this.game.height - 80, this.treeCoast().toString(), 30, "#000");
+                    console.log(this.energyNeeded);
+                    this.game.world.bringToTop(this.energyNeeded);
+                }
                 this.growButton.animations.add('growButton');
                 this.growButton.animations.play('growButton', 4, true);
                 this.growButton.inputEnabled = true;
@@ -297,16 +303,17 @@ var Twiggy;
                 this.treeName = new TextObject(this.game, 0, 50, Twiggy.TwiggyGame.userData.plot.plant.title, 30, "#000");
                 this.treeName.x = this.game.width / 2 - this.treeName.width / 2;
             }
+            this.energyNeeded.text = this.treeCoast().toString() + " energie nodig om te groeien";
             this.game.world.bringToTop(this.treeName);
             this.game.world.bringToTop(this.popup);
         };
         RunningState.prototype.growButtonHandler = function () {
             console.log(Twiggy.TwiggyGame.userData);
             //check data
-            var updateCoast = this.treeCoast();
-            if (Twiggy.TwiggyGame.userData.energy >= updateCoast) {
+            var updateCost = this.treeCoast();
+            if (Twiggy.TwiggyGame.userData.energy >= updateCost) {
                 if (Twiggy.TwiggyGame.userData.plot.plant.state_id < 7) {
-                    Twiggy.TwiggyGame.userData.energy -= updateCoast;
+                    Twiggy.TwiggyGame.userData.energy -= updateCost;
                     this.energy.amount = Twiggy.TwiggyGame.userData.energy;
                     Twiggy.TwiggyGame.userData.plot.plant.state_id += 1;
                     this.loadNewState();
